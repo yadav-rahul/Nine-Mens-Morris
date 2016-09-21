@@ -5,6 +5,7 @@
 
 canvas {
     margin: auto;
+    background: url("../Nine Men's Morris/main.jpg");
     border: 1px solid #d3d3d3;
     background-color: #f1f1f1;
 }
