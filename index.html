@@ -4,14 +4,19 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     <title>Nine Men's Morris</title>
 </head>
-<body>
+<body onload="initializeGame()">
+
+
 <div class="mid">
     <p>Nine Men's Morris</p>
 </div>
 <div class="mid" >
-    <canvas height = "500" width="500" id="game_arena">
+    <canvas height = "550" width="550" id="myCanvas">
         Your browser does not support the HTML5 canvas tag.
     </canvas>
+</div>
+<div class="mid">
+    <p id="turn">P1 turn</p>
 </div>
 <script src="script.js"></script>
 </body>
