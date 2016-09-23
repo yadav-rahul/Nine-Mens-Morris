@@ -1,11 +1,20 @@
-.mid{
+.mid {
     text-align: center;
     margin: auto;
 }
 
-body{
+.copyright {
+    color: #FFFFFF;
+    margin: auto;
+    text-align: center;
+    line-height: 40px;
+    font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+body {
     background: #aaa;
 }
+
 canvas {
     z-index: -1;
     margin: auto;
