@@ -2,6 +2,10 @@
  * Created by Rahul on 9/22/2016.
  */
 
+var redBlocks = 0;
+var greenBlocks = 0;
+var isMillRed = false;
+var isMillGreen = false;
 var isActiveRed = false;
 var isActiveGreen = false;
 var blockWidth = 16;
@@ -11,7 +15,8 @@ var lastY = 0;
 var lastCenterX = 0;
 var lastCenterY = 0;
 var numberOfTurns = 0;
-var totalPositions = 24;
+var rows = 7;
+var columns = 7;
 var positionArray = new Array(7);
 var canvas = document.getElementById("myCanvas");
 var context = canvas.getContext("2d");
@@ -20,9 +25,7 @@ var context = canvas.getContext("2d");
 function initializeGame() {
     initializeArray();
     //  alert("Player 1 turns first followed by Player 2");
-    makeMove();
 }
-
 
 function initializeArray() {
     for (var i = 0; i < 7; i++) {
@@ -46,6 +49,7 @@ function initializeArray() {
 }
 
 function makeMove(X, Y) {
+
     var yCenter;
     var xCenter;
 
@@ -206,7 +210,26 @@ function makeMove(X, Y) {
             break;
         }
     }
-    if (numberOfTurns >= 18 && (isActiveRed || isActiveGreen)) {
+    if (isMillGreen || isMillRed) {
+        //In this case don't change player turn and remove other player block in next click
+        var playerCode = (isMillGreen) ? 1 : 2;
+        if (positionArray[X][Y] != playerCode && (positionArray[X][Y] != 0)) {
+            //Remove that block and update array value to zero
+            if (playerCode == 1) {
+                redBlocks--;
+            } else {
+                greenBlocks--;
+            }
+            context.clearRect(xCenter - blockWidth - strokeWidth, yCenter - blockWidth - strokeWidth,
+                2 * (blockWidth + strokeWidth), 2 * ( blockWidth + strokeWidth));
+            positionArray[X][Y] = 0;
+            document.getElementById("message").innerHTML = "Message";
+            turnOffMill();
+            update();
+        }
+    }
+
+    else if (numberOfTurns >= 18 && (isActiveRed || isActiveGreen)) {
 
         if ((((X == lastX) && (Y == lastY)))) {
             turnOffActive(lastCenterX, lastCenterY);
@@ -215,9 +238,9 @@ function makeMove(X, Y) {
         if ((positionArray[X][Y] == 0)) {
 
             if (((X == lastX) || (Y == lastY))) {
-                console.log("Index : " + X + "  " + Y + "\n");
-                console.log("Last Index : " + lastX + "  " + lastY + "\n");
-
+                // console.log("Index : " + X + "  " + Y + "\n");
+                // console.log("Last Index : " + lastX + "  " + lastY + "\n");
+                //
 
                 if (X == 0 || X == 6 || Y == 0 || Y == 6) {
                     if (((Math.abs(X - lastX) + Math.abs(Y - lastY)) == 3 ) || ((Math.abs(X - lastX) + Math.abs(Y - lastY)) == 1 )) {
@@ -248,6 +271,7 @@ function makeMove(X, Y) {
             }
         }
     }
+
     else if (positionArray[X][Y] == 0 && numberOfTurns < 18) {
 
         // console.log("Index : " + X + "  " + Y + "\n");
@@ -255,6 +279,7 @@ function makeMove(X, Y) {
         //Place is empty, hence make a move here
         if (numberOfTurns % 2 != 0) {
             //Player two made a move, hence made a block red.
+            redBlocks++;
             positionArray[X][Y] = 2;
             context.beginPath();
             context.arc(xCenter, yCenter, blockWidth, 0, 2 * Math.PI, false);
@@ -263,11 +288,19 @@ function makeMove(X, Y) {
             context.lineWidth = strokeWidth;
             context.strokeStyle = '#003300';
             context.stroke();
-            checkMill(X, Y, 2);
             document.getElementById("turn").innerHTML = "Turn : P1";
+            if (checkMill(X, Y, 2)) {
+                isMillRed = true;
+                document.getElementById("turn").innerHTML = "Turn : P2";
+                document.getElementById("message").innerHTML = "Click on any green block to remove it.";
+            } else {
+                document.getElementById("message").innerHTML = "Message";
+            }
+
         }
         else {
             //Player one just made a move, hence made a block green
+            greenBlocks++;
             positionArray[X][Y] = 1;
             context.beginPath();
             context.arc(xCenter, yCenter, blockWidth, 0, 2 * Math.PI, false);
@@ -276,8 +309,15 @@ function makeMove(X, Y) {
             context.lineWidth = strokeWidth;
             context.strokeStyle = '#003300';
             context.stroke();
-            checkMill(X, Y, 1);
             document.getElementById("turn").innerHTML = "Turn : P2";
+            if (checkMill(X, Y, 1)) {
+                isMillGreen = true;
+                document.getElementById("turn").innerHTML = "Turn : P1";
+                document.getElementById("message").innerHTML = "Click on any red block to remove it.";
+            } else {
+                document.getElementById("message").innerHTML = "Message";
+            }
+
 
         }
         numberOfTurns++;
@@ -313,6 +353,15 @@ function makeMove(X, Y) {
         }
 
     }
+
+    for (var r = 0; r < 7; r++) {
+        console.log(positionArray[0][r] + "\t" + positionArray[1][r] + "\t" + positionArray[2][r] + "\t" +
+            positionArray[3][r] + "\t" + positionArray[4][r] + "\t" + positionArray[5][r] + "\t" + positionArray[6][r]);
+    }
+    console.log("\n");
+    console.log("Green Left : " + greenBlocks + ", Red Left : " + redBlocks + "\n");
+
+    checkGameOver();
 }
 
 canvas.addEventListener("click", mouseClick);
@@ -406,6 +455,11 @@ function turnOffActive(x, y) {
     isActiveGreen = false;
 }
 
+function turnOffMill() {
+    isMillGreen = false;
+    isMillRed = false;
+}
+
 function clearBlock(xI, yI) {
     //Clear canvas at previous position
     context.clearRect(xI - blockWidth - strokeWidth, yI - blockWidth - strokeWidth,
@@ -420,11 +474,17 @@ function drawBlock(x, y, X, Y) {
     if (isActiveRed) {
         positionArray[X][Y] = 2;
         context.fillStyle = '#F44336';
-        checkMill(X, Y, 2);
+        if (checkMill(X, Y, 2)) {
+            isMillRed = true;
+            document.getElementById("message").innerHTML = "Click on any green block to remove it.";
+        }
     } else {
         positionArray[X][Y] = 1;
         context.fillStyle = '#2E7D32';
-        checkMill(X, Y, 1);
+        if (checkMill(X, Y, 1)) {
+            isMillGreen = true;
+            document.getElementById("message").innerHTML = "Click on any red block to remove it.";
+        }
     }
     context.fill();
     context.lineWidth = 2;
@@ -436,17 +496,101 @@ function drawBlock(x, y, X, Y) {
     numberOfTurns++;
     update();
 }
+
 function checkThreeleft() {
     //Check if less than or equal to three players left.
 
 }
-function checkMill(x, y, playerCode) {
-    //Check if any mill is forming around the given coordinates
 
+function checkMill(x, y, playerCode) {
+    //Using the fact that two mills cannot occur simultaneously
+    var flag = 0;
+    var temp = 0;
+    //Transverse through the given row and column and check for mill
+    for (var i = 0; i < 5; i++) {
+        flag = 0;
+        for (var j = temp; j < temp + 3; j++) {
+            if (positionArray[j][y] == playerCode) {
+                continue;
+            } else {
+                flag = 1;
+                break;
+            }
+        }
+        if (flag == 0) {
+            console.log("This is from : " + 1);
+            return true;
+        } else {
+            temp++;
+        }
+    }
+
+    flag = 0;
+    temp = 0;
+    //Now moving along the given column
+    for (var k = 0; k < 5; k++) {
+        flag = 0;
+        for (var l = temp; l < temp + 3; l++) {
+            if (positionArray[x][l] == playerCode) {
+                continue;
+            } else {
+                flag = 1;
+                break;
+            }
+        }
+        if (flag == 0) {
+            console.log("This is from : " + 2);
+            return true;
+        } else {
+            temp++;
+        }
+    }
+
+    var check = true;
+    var oppositeCode = (playerCode == 1) ? 2 : 1;
+    for (var a = 0; a < 7; a++) {
+        if ((positionArray[a][y] == oppositeCode) || (positionArray[a][y] == 0)) {
+            check = false;
+            break;
+        }
+    }
+    if (check == true) {
+        console.log("This is from : " + 3);
+        return true;
+    }
+    check = true;
+
+    for (var b = 0; b < 7; b++) {
+        //Check for any empty element of any element of anther type
+        if ((positionArray[x][b] == oppositeCode) || (positionArray[x][b] == 0)) {
+            check = false;
+            break;
+        }
+    }
+    if (check == true) {
+        console.log("This is from : " + 4);
+        return true;
+    }
+
+    return false;
 }
+
 function checkGameOver() {
-    //Either less than three left or no legal move
+    //If less than 3 players left of any team.
+    if (numberOfTurns >= 18) {
+        if (redBlocks < 3 || greenBlocks < 3) {
+            alert("Player " + ((greenBlocks < 3) ? 2 : 1) + " wins !");
+            location.reload(true);
+        }
+        else {
+            //Check if no adjacent element available for any of the player.
+
+        }
+
+
+    }
 }
+
 function update() {
     //Update player turn
     if (numberOfTurns % 2 != 0) {
