@@ -30,7 +30,7 @@ var context = canvas.getContext("2d");
 function initializeGame() {
     clickSound = new sound("sound.wav");
     initializeArray();
-    //  alert("Player 1 turns first followed by Player 2");
+    alert("Player 1 turns first followed by Player 2");
 }
 
 function sound(src) {
@@ -40,7 +40,7 @@ function sound(src) {
     this.sound.setAttribute("controls", "none");
     this.sound.style.display = "none";
     document.body.appendChild(this.sound);
-    this.play = function(){
+    this.play = function () {
         this.sound.play();
     }
 }
@@ -262,41 +262,48 @@ function makeMove(X, Y) {
         }
 
         if ((positionMatrix[X][Y] == 0)) {
-            if ((!isGreenThreeLeft) && (!isRedThreeLeft)) {
-                if (((X == lastX) || (Y == lastY))) {
-                    if (X == 0 || X == 6 || Y == 0 || Y == 6) {
-                        if (((Math.abs(X - lastX) + Math.abs(Y - lastY)) == 3 ) || ((Math.abs(X - lastX) + Math.abs(Y - lastY)) == 1 )) {
-                            //Remove previous block and make a new block at the the given position
-                            positionMatrix[lastX][lastY] = 0;
-                            clearBlock(lastCenterX, lastCenterY);
-                            drawBlock(xCenter, yCenter, X, Y);
-                        }
-                    } else if (X == 1 || X == 5 || Y == 1 || Y == 5) {
-                        if (((Math.abs(X - lastX) + Math.abs(Y - lastY)) == 2 ) || ((Math.abs(X - lastX) + Math.abs(Y - lastY)) == 1 )) {
-                            //Remove previous block and make a new block at the the given position
-                            positionMatrix[lastX][lastY] = 0;
-                            clearBlock(lastCenterX, lastCenterY);
-                            drawBlock(xCenter, yCenter, X, Y);
-                        }
-                    } else if (X == 2 || X == 4 || Y == 2 || Y == 4) {
-                        if (((Math.abs(X - lastX) + Math.abs(Y - lastY)) == 1 )) {
-                            //Remove previous block and make a new block at the the given position
-                            positionMatrix[lastX][lastY] = 0;
-                            clearBlock(lastCenterX, lastCenterY);
-                            drawBlock(xCenter, yCenter, X, Y);
-                        }
+            //Checking for adjacent element.
+            if (((X == lastX) || (Y == lastY))) {
+                if (X == 0 || X == 6 || Y == 0 || Y == 6) {
+                    if (((Math.abs(X - lastX) + Math.abs(Y - lastY)) == 3 ) || ((Math.abs(X - lastX) + Math.abs(Y - lastY)) == 1 )) {
+                        //Remove previous block and make a new block at the the given position
+                        positionMatrix[lastX][lastY] = 0;
+                        clearBlock(lastCenterX, lastCenterY);
+                        drawBlock(xCenter, yCenter, X, Y);
                     }
+                } else if (X == 1 || X == 5 || Y == 1 || Y == 5) {
+                    if (((Math.abs(X - lastX) + Math.abs(Y - lastY)) == 2 ) || ((Math.abs(X - lastX) + Math.abs(Y - lastY)) == 1 )) {
+                        //Remove previous block and make a new block at the the given position
+                        positionMatrix[lastX][lastY] = 0;
+                        clearBlock(lastCenterX, lastCenterY);
+                        drawBlock(xCenter, yCenter, X, Y);
+                    }
+                } else if (X == 2 || X == 4 || Y == 2 || Y == 4) {
+                    if (((Math.abs(X - lastX) + Math.abs(Y - lastY)) == 1 )) {
+                        //Remove previous block and make a new block at the the given position
+                        positionMatrix[lastX][lastY] = 0;
+                        clearBlock(lastCenterX, lastCenterY);
+                        drawBlock(xCenter, yCenter, X, Y);
+                    }
+                }
 
-                } else {
-                    //Make active off
+            } else {
+                if (isGreenThreeLeft && (positionMatrix[lastX][lastY] == playerOneCode)) {
+                    positionMatrix[lastX][lastY] = 0;
+                    clearBlock(lastCenterX, lastCenterY);
+                    drawBlock(xCenter, yCenter, X, Y);
+                }
+                else if (isRedThreeLeft && (positionMatrix[lastX][lastY] == playerTwoCode)) {
+                    positionMatrix[lastX][lastY] = 0;
+                    clearBlock(lastCenterX, lastCenterY);
+                    drawBlock(xCenter, yCenter, X, Y);
+                }
+                else {
                     turnOffActive(lastCenterX, lastCenterY);
                 }
-            } else {
-                //Move anywhere to the point where user clicks
-                positionMatrix[lastX][lastY] = 0;
-                clearBlock(lastCenterX, lastCenterY);
-                drawBlock(xCenter, yCenter, X, Y);
+
             }
+
         }
     }
 
@@ -356,9 +363,9 @@ function makeMove(X, Y) {
     else if (numberOfTurns >= 18 && positionMatrix[X][Y] != 0) {
         //Do nothing when clicked on empty element and check the all possible moves that
         // a player have after clicking on a  particular position of his own color.
-        clickSound.play();
         if (numberOfTurns % 2 != 0 && positionMatrix[X][Y] == 2) {
             //Player two made a move, hence made a block fade red.
+            clickSound.play();
             isActiveRed = true;
             if (checkThreeLeft(playerTwoCode)) {
                 isRedThreeLeft = true;
@@ -377,6 +384,7 @@ function makeMove(X, Y) {
         }
         else if (numberOfTurns % 2 == 0 && positionMatrix[X][Y] == 1) {
             //Player one just made a move, hence made a block green
+            clickSound.play();
             isActiveGreen = true;
             if (checkThreeLeft(playerOneCode)) {
                 isGreenThreeLeft = true;
@@ -396,13 +404,11 @@ function makeMove(X, Y) {
         }
 
     }
-
-    for (var r = 0; r < 7; r++) {
-        console.log(positionMatrix[0][r] + "\t" + positionMatrix[1][r] + "\t" + positionMatrix[2][r] + "\t" +
-            positionMatrix[3][r] + "\t" + positionMatrix[4][r] + "\t" + positionMatrix[5][r] + "\t" + positionMatrix[6][r]);
-    }
-    console.log("\n");
-    console.log("Green Left : " + greenBlocks + ", Red Left : " + redBlocks + "\n");
+    //
+    // for (var r = 0; r < 7; r++) {
+    //     console.log(positionMatrix[0][r] + "\t" + positionMatrix[1][r] + "\t" + positionMatrix[2][r] + "\t" +
+    //         positionMatrix[3][r] + "\t" + positionMatrix[4][r] + "\t" + positionMatrix[5][r] + "\t" + positionMatrix[6][r]);
+    // }
 
     checkGameOver();
 }
@@ -558,7 +564,7 @@ function checkMill(x, y, playerCode) {
             }
         }
         if (flag == 0) {
-            console.log("This is from : " + 1);
+            //console.log("This is from : " + 1);
             return true;
         } else {
             temp++;
@@ -579,7 +585,7 @@ function checkMill(x, y, playerCode) {
             }
         }
         if (flag == 0) {
-            console.log("This is from : " + 2);
+            // console.log("This is from : " + 2);
             return true;
         } else {
             temp++;
@@ -595,7 +601,7 @@ function checkMill(x, y, playerCode) {
         }
     }
     if (check == true) {
-        console.log("This is from : " + 3);
+        //console.log("This is from : " + 3);
         return true;
     }
     check = true;
@@ -608,7 +614,7 @@ function checkMill(x, y, playerCode) {
         }
     }
     if (check == true) {
-        console.log("This is from : " + 4);
+        //console.log("This is from : " + 4);
         return true;
     }
 
@@ -619,7 +625,6 @@ function checkThreeLeft(playerCode) {
     return (numberOfTurns >= 18 && (((playerCode == 1) ? greenBlocks : redBlocks) == 3 ))
 }
 
-//TODO Add second check too
 function checkGameOver() {
     //If less than 3 players left of any team.
     if (numberOfTurns >= 18) {
@@ -644,6 +649,7 @@ function checkGameOver() {
     }
 }
 
+//TODO Complete this method
 function canMove(playerCode, blocksLeft) {
     //Transverse through the matrix and check if any move is possible or not
     if (blocksLeft == 3) {
@@ -656,8 +662,6 @@ function canMove(playerCode, blocksLeft) {
             if (positionMatrix[i][j] == playerCode) {
                 //Now check for adjacent zero element
                 //If an adjacent zero is found in the given row or column then return true
-                temp--;
-
 
             }
         }
