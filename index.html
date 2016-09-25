@@ -7,20 +7,20 @@
 <body onload="initializeGame()">
 
 
-<div class="mid">
-    <p>Nine Men's Morris</p>
+<div class="header">
+    <span class="turn">Turn : <span id="turn">P1</span></span>
+    <span class="message">{Message : <span id="message">Click on empty spot to place your piece</span> }</span>
 </div>
-<div class="mid" >
-    <canvas height = "550" width="550" id="myCanvas">
+<br>
+<div class="mid">
+    <canvas height="550" width="550" id="myCanvas">
         Your browser does not support the HTML5 canvas tag.
     </canvas>
 </div>
-<div class="mid" style="display: inline">
-    <p id="turn">Turn : P1</p>
-    <p id ="message">{Message : First place 9 Blocks}</p>
-</div>
 
-<p class="copyright">Copyright &#169 Rahul Yadav 2016</p>
+<p class="copyright">Copyright &#169 Rahul Yadav
+    <script type="text/javascript">document.write(new Date().getFullYear());</script>
+</p>
 <script src="script.js"></script>
 </body>
 </html>
