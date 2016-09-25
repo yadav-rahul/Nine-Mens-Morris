@@ -3,19 +3,20 @@
     margin: auto;
 }
 
-.header{
+.header {
     line-height: 2.7em;
 }
 
-.turn{
+.turn {
     margin-left: 30%;
     float: left;
 }
 
-.message{
+.message {
     margin-right: 30%;
     float: right;
 }
+
 .copyright {
     color: #222222;
     margin: auto;
@@ -31,6 +32,6 @@ body {
 canvas {
     z-index: -1;
     margin: auto;
-    background: url("../Nine Men's Morris/img/main.jpg");
+    background: url("/img/main.jpg");
     border: 1px solid #d3d3d3;
 }
