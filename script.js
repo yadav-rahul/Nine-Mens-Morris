@@ -238,7 +238,7 @@ function makeMove(X, Y) {
         var playerCode = (isMillGreen) ? 1 : 2;
         if (positionMatrix[X][Y] != playerCode && (positionMatrix[X][Y] != 0)) {
             //Check that it shouldn't be the part of other mill
-            if (!checkMill(X, Y, ((isMillRed) ? 1 : 2))) {
+            if (!checkMill(X, Y, ((isMillRed) ? 1 : 2)) || allArePartOfMill(((isMillRed) ? 1 : 2))) {
                 //Remove that block and update array value to zero
                 clickSound.play();
                 if (playerCode == 1) {
@@ -654,25 +654,39 @@ function checkGameOver() {
     }
 }
 
+function allArePartOfMill(playerCode) {
+    //return false if atleast one of them is not a part of the mill
+    for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < columns; j++) {
+            if (positionMatrix[i][j] == playerCode){
+                if (!checkMill(i, j, playerCode)) {
+                    return false;
+                }
+            }
+
+        }
+    }
+    return true;
+}
 function canMove(playerCode, blocksLeft) {
     //If only 3 are left then it can always move anywhere
     if (blocksLeft == 3) {
         return true;
     }
     //return true even if one of them have at least one valid move left
-    for(var i=0;i<rows;i++){
-        for(var j=0;j<columns;j++){
-            if (positionMatrix[j][i] == playerCode){
+    for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < columns; j++) {
+            if (positionMatrix[j][i] == playerCode) {
                 //now move in all four directions until index becomes < 0 || >6
                 // or after -1's zero comes at the given position.
 
                 //Left
-                if (!(j == 4 && i == 3)){
-                    for(var k = j-1 ; k>=0;k--){
-                        if (positionMatrix[k][i] != -1){
-                            if (positionMatrix[k][i] == 0){
+                if (!(j == 4 && i == 3)) {
+                    for (var k = j - 1; k >= 0; k--) {
+                        if (positionMatrix[k][i] != -1) {
+                            if (positionMatrix[k][i] == 0) {
                                 return true;
-                            }else{
+                            } else {
                                 //Adjacent piece is occupied by some block
                                 break;
                             }
@@ -681,12 +695,12 @@ function canMove(playerCode, blocksLeft) {
                 }
 
                 //Top
-                if (!(j == 3 && i == 4)){
-                    for (var l = i-1;l>=0;l--){
-                        if (positionMatrix[j][l] != -1){
-                            if (positionMatrix[j][l] == 0){
+                if (!(j == 3 && i == 4)) {
+                    for (var l = i - 1; l >= 0; l--) {
+                        if (positionMatrix[j][l] != -1) {
+                            if (positionMatrix[j][l] == 0) {
                                 return true;
-                            }else{
+                            } else {
                                 //Adjacent piece is occupied by some block
                                 break;
                             }
@@ -696,12 +710,12 @@ function canMove(playerCode, blocksLeft) {
 
 
                 //Right
-                if (!(j == 2 && i == 3)){
-                    for(var m = j+1;m<7;m++){
-                        if (positionMatrix[m][i] != -1){
-                            if (positionMatrix[m][i] == 0){
+                if (!(j == 2 && i == 3)) {
+                    for (var m = j + 1; m < 7; m++) {
+                        if (positionMatrix[m][i] != -1) {
+                            if (positionMatrix[m][i] == 0) {
                                 return true;
-                            }else{
+                            } else {
                                 //Adjacent piece is occupied by some block
                                 break;
                             }
@@ -711,12 +725,12 @@ function canMove(playerCode, blocksLeft) {
 
 
                 //Bottom
-                if (!(j == 3 && i == 2)){
-                    for(var n =i+1;n<7;n++){
-                        if (positionMatrix[j][n] != -1){
-                            if (positionMatrix[j][n] == 0){
+                if (!(j == 3 && i == 2)) {
+                    for (var n = i + 1; n < 7; n++) {
+                        if (positionMatrix[j][n] != -1) {
+                            if (positionMatrix[j][n] == 0) {
                                 return true;
-                            }else{
+                            } else {
                                 //Adjacent piece is occupied by some block
                                 break;
                             }
