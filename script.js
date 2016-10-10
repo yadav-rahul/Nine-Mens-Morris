@@ -23,6 +23,7 @@ var rows = 7;
 var columns = 7;
 var clickSound;
 var positionMatrix = new Array(7);
+var referenceMatrix = new Array(7);
 var canvas = document.getElementById("myCanvas");
 var context = canvas.getContext("2d");
 
@@ -47,6 +48,7 @@ function sound(src) {
 
 function initializeArray() {
     for (var i = 0; i < 7; i++) {
+        referenceMatrix[i] = new Array(7);
         positionMatrix[i] = new Array(7);
     }
 
@@ -54,14 +56,17 @@ function initializeArray() {
         for (var k = 0; k < 7; k++) {
             //Make all diagonal elements + boundary + center to zero
             if ((j == 3) || (k == 3) || (j == k) || (j + k == 6)) {
+                referenceMatrix[j][k] = 0;
                 positionMatrix[j][k] = 0;
             }
             else {
+                referenceMatrix[j][k] = -1;
                 positionMatrix[j][k] = -1;
             }
         }
     }
     //Finally making center also -1
+    referenceMatrix[3][3] = -1;
     positionMatrix[3][3] = -1;
 
 }
@@ -649,26 +654,81 @@ function checkGameOver() {
     }
 }
 
-//TODO Complete this method
 function canMove(playerCode, blocksLeft) {
-    //Transverse through the matrix and check if any move is possible or not
+    //If only 3 are left then it can always move anywhere
     if (blocksLeft == 3) {
         return true;
     }
-    var temp = blocksLeft;
-    //return true even if one block can move.
-    for (var i = 0; i < rows; i++) {
-        for (var j = 0; j < columns; j++) {
-            if (positionMatrix[i][j] == playerCode) {
-                //Now check for adjacent zero element
-                //If an adjacent zero is found in the given row or column then return true
+    //return true even if one of them have at least one valid move left
+    for(var i=0;i<rows;i++){
+        for(var j=0;j<columns;j++){
+            if (positionMatrix[j][i] == playerCode){
+                //now move in all four directions until index becomes < 0 || >6
+                // or after -1's zero comes at the given position.
+
+                //Left
+                if (!(j == 4 && i == 3)){
+                    for(var k = j-1 ; k>=0;k--){
+                        if (positionMatrix[k][i] != -1){
+                            if (positionMatrix[k][i] == 0){
+                                return true;
+                            }else{
+                                //Adjacent piece is occupied by some block
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                //Top
+                if (!(j == 3 && i == 4)){
+                    for (var l = i-1;l>=0;l--){
+                        if (positionMatrix[j][l] != -1){
+                            if (positionMatrix[j][l] == 0){
+                                return true;
+                            }else{
+                                //Adjacent piece is occupied by some block
+                                break;
+                            }
+                        }
+                    }
+                }
+
+
+                //Right
+                if (!(j == 2 && i == 3)){
+                    for(var m = j+1;m<7;m++){
+                        if (positionMatrix[m][i] != -1){
+                            if (positionMatrix[m][i] == 0){
+                                return true;
+                            }else{
+                                //Adjacent piece is occupied by some block
+                                break;
+                            }
+                        }
+                    }
+                }
+
+
+                //Bottom
+                if (!(j == 3 && i == 2)){
+                    for(var n =i+1;n<7;n++){
+                        if (positionMatrix[j][n] != -1){
+                            if (positionMatrix[j][n] == 0){
+                                return true;
+                            }else{
+                                //Adjacent piece is occupied by some block
+                                break;
+                            }
+                        }
+                    }
+                }
 
             }
         }
     }
 
-    return true;
-    //return false;
+    return false;
 }
 
 function update() {
