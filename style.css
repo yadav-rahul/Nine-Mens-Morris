@@ -32,6 +32,6 @@ body {
 canvas {
     z-index: -1;
     margin: auto;
-    background: url("main.jpg");
+    background: url("main.png");
     border: 1px solid #d3d3d3;
 }
