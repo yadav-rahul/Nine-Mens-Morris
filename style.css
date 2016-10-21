@@ -4,29 +4,42 @@
 }
 
 .header {
-    line-height: 2.7em;
+    margin: 10px;
+    font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
 }
 
 .turn {
-    margin-left: 30%;
+    margin-left: 28%;
+    margin-bottom: 1%;
     float: left;
 }
 
 .message {
-    margin-right: 30%;
+    margin-right: 28%;
+    margin-bottom: 1%;
     float: right;
 }
 
 .copyright {
-    color: #222223;
+    color: #FFFFFF;
     margin: auto;
     text-align: center;
     line-height: 40px;
-    font-family: Montserrat, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    font-family: "Roboto Slab", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 body {
-    background: #aaa;
+    background: url("../Nine-Mens-Morris/background.jpg") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: 100%;
+    color: #FFF;
+    margin: 0;
+    padding: 0;
 }
 
 canvas {
